@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace cooldogedev\spectral\frame;
 
 use pmmp\encoding\ByteBuffer;
+use pmmp\encoding\LE;
 use function strlen;
 
 final class StreamData extends Frame
@@ -29,16 +30,16 @@ final class StreamData extends Frame
 
     public function encode(ByteBuffer $buf): void
     {
-        $buf->writeSignedLongLE($this->streamID);
-        $buf->writeUnsignedIntLE($this->sequenceID);
-        $buf->writeUnsignedIntLE(strlen($this->payload));
+        LE::writeSignedLong($buf, $this->streamID);
+        LE::writeUnsignedInt($buf, $this->sequenceID);
+        LE::writeUnsignedInt($buf, strlen($this->payload));
         $buf->writeByteArray($this->payload);
     }
 
     public function decode(ByteBuffer $buf): void
     {
-        $this->streamID = $buf->readSignedLongLE();
-        $this->sequenceID = $buf->readUnsignedIntLE();
-        $this->payload = $buf->readByteArray($buf->readUnsignedIntLE());
+        $this->streamID = LE::readSignedLong($buf);
+        $this->sequenceID = LE::readUnsignedInt($buf);
+        $this->payload = $buf->readByteArray(LE::readUnsignedInt($buf));
     }
 }

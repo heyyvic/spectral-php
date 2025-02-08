@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace cooldogedev\spectral\frame;
 
+use pmmp\encoding\Byte;
 use pmmp\encoding\ByteBuffer;
+use pmmp\encoding\LE;
 use function strlen;
 
 final class ConnectionClose extends Frame
@@ -32,14 +34,14 @@ final class ConnectionClose extends Frame
 
     public function encode(ByteBuffer $buf): void
     {
-        $buf->writeUnsignedByte($this->code);
-        $buf->writeUnsignedIntLE(strlen($this->message));
+        Byte::writeUnsigned($buf, $this->code);
+        LE::writeUnsignedInt($buf, strlen($this->message));
         $buf->writeByteArray($this->message);
     }
 
     public function decode(ByteBuffer $buf): void
     {
-        $this->code = $buf->readUnsignedByte();
-        $this->message = $buf->readByteArray($buf->readUnsignedIntLE());
+        $this->code = Byte::readUnsigned($buf);
+        $this->message = $buf->readByteArray(LE::readUnsignedInt($buf));
     }
 }

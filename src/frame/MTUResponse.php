@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace cooldogedev\spectral\frame;
 
 use pmmp\encoding\ByteBuffer;
+use pmmp\encoding\LE;
 
 final class MTUResponse extends Frame
 {
@@ -24,11 +25,11 @@ final class MTUResponse extends Frame
 
     public function encode(ByteBuffer $buf): void
     {
-        $buf->writeSignedLongLE($this->mtu);
+        LE::writeSignedLong($buf, $this->mtu);
     }
 
     public function decode(ByteBuffer $buf): void
     {
-        $this->mtu = $buf->readSignedLongLE();
+        $this->mtu = LE::readSignedLong($buf);
     }
 }

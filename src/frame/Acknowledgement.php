@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace cooldogedev\spectral\frame;
 
 use pmmp\encoding\ByteBuffer;
+use pmmp\encoding\LE;
 use function count;
 
 final class Acknowledgement extends Frame
@@ -32,24 +33,24 @@ final class Acknowledgement extends Frame
 
     public function encode(ByteBuffer $buf): void
     {
-        $buf->writeSignedLongLE($this->delay);
-        $buf->writeUnsignedIntLE($this->max);
-        $buf->writeUnsignedIntLE(count($this->ranges));
+        LE::writeSignedLong($buf, $this->delay);
+        LE::writeUnsignedInt($buf, $this->max);
+        LE::writeUnsignedInt($buf, count($this->ranges));
         foreach ($this->ranges as $range) {
-            $buf->writeUnsignedIntLE($range[0]);
-            $buf->writeUnsignedIntLE($range[1]);
+            LE::writeUnsignedInt($buf, $range[0]);
+            LE::writeUnsignedInt($buf, $range[1]);
         }
     }
 
     public function decode(ByteBuffer $buf): void
     {
-        $this->delay = $buf->readSignedLongLE();
-        $this->max = $buf->readUnsignedIntLE();
-        $length = $buf->readUnsignedIntLE();
+        $this->delay = LE::readSignedLong($buf);
+        $this->max = LE::readUnsignedInt($buf);
+        $length = LE::readUnsignedInt($buf);
         for ($i = 0; $i < $length; $i++) {
             $this->ranges[$i] = [
-                $buf->readUnsignedIntLE(),
-                $buf->readUnsignedIntLE(),
+                LE::readUnsignedInt($buf),
+                LE::readUnsignedInt($buf)
             ];
         }
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace cooldogedev\spectral\frame;
 
 use pmmp\encoding\ByteBuffer;
+use pmmp\encoding\LE;
 use function str_repeat;
 
 final class MTURequest extends Frame
@@ -25,13 +26,13 @@ final class MTURequest extends Frame
 
     public function encode(ByteBuffer $buf): void
     {
-        $buf->writeSignedLongLE($this->mtu);
+        LE::writeSignedLong($buf, $this->mtu);
         $buf->writeByteArray(str_repeat("\x00", $this->mtu - 8));
     }
 
     public function decode(ByteBuffer $buf): void
     {
-        $this->mtu = $buf->readSignedLongLE();
+        $this->mtu = LE::readSignedLong($buf);
         $buf->readByteArray($this->mtu - 8);
     }
 }
