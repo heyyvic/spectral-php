@@ -7,6 +7,7 @@ namespace cooldogedev\spectral\frame;
 use cooldogedev\spectral\Protocol;
 use pmmp\encoding\BE;
 use pmmp\encoding\ByteBuffer;
+use pmmp\encoding\LE;
 
 final class Pack
 {
@@ -15,7 +16,7 @@ final class Pack
     public static function packSingle(Frame $fr): string
     {
         $buf = Pack::getBuffer();
-        BE::writeUnsignedInt($buf, $fr->id());
+        LE::writeUnsignedInt($buf, $fr->id());
         $fr->encode($buf);
         return $buf->toString();
     }
@@ -24,8 +25,8 @@ final class Pack
     {
         $buf = Pack::getBuffer();
         $buf->writeByteArray(Protocol::MAGIC);
-        BE::writeSignedLong($buf, $connectionID);
-        BE::writeUnsignedInt($buf, $sequenceID);
+        LE::writeSignedLong($buf, $connectionID);
+        LE::writeUnsignedInt($buf, $sequenceID);
         $buf->writeByteArray($frames);
         return $buf->toString();
     }
@@ -43,10 +44,10 @@ final class Pack
         }
 
         $connectionID = BE::readSignedLong($buf);
-        $sequenceID = BE::readUnsignedInt($buf);
+        $sequenceID = LE::readUnsignedInt($buf);
         $frames = [];
         while ($buf->getUsedLength() > $buf->getReadOffset()) {
-            $fr = Pool::getFrame(BE::readUnsignedInt($buf));
+            $fr = Pool::getFrame(LE::readUnsignedInt($buf));
             if ($fr === null) {
                 break;
             }
