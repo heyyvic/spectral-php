@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-        "ext-encoding": "*",
+        "ext-encoding": "0.3.0",
         "ext-sockets": "*",
         "symfony/filesystem": "^7.1"
     },
