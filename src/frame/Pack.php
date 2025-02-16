@@ -15,7 +15,7 @@ final class Pack
     public static function packSingle(Frame $fr): string
     {
         $buf = Pack::getBuffer();
-        LE::writeUnsignedInt($buf, 1);
+        LE::writeUnsignedInt($buf, $fr->id());
         $fr->encode($buf);
         return $buf->toString();
     }
